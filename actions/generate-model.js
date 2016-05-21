@@ -22,7 +22,7 @@ module.exports = function(modelName) {
 
   // Check if the model already exists
   try {
-    stats = fs.lstatSync(nov.novemberDir() + 'app/models/' + modelName + '.js');
+    stats = fs.lstatSync(nov.novemberDir() + 'api/models/' + modelName + '.js');
     finalResolver.reject("There's already a model with the name " + modelName + "!");
   }
   catch (e) {
@@ -31,7 +31,7 @@ module.exports = function(modelName) {
     var modelFolderName  = inflect.parameterize(inflect.singularize(modelName));
 
     // Get current contents of router.js file and remove last part
-    fs.readFileAsync(nov.novemberDir() + 'app/router.js', 'utf8')
+    fs.readFileAsync(nov.novemberDir() + 'api/router.js', 'utf8')
     .then(function(fileContents) {
       routerContents = fileContents.substr(0, fileContents.lastIndexOf('}'));
       return fs.readFileAsync(nov.templateDir('router-model.js'), 'utf8');
@@ -40,11 +40,11 @@ module.exports = function(modelName) {
     .then(function(routeCode) {
       routeCode = nov.fillTemplatePlaceholders(routeCode, modelName);
       routerContents = routerContents + routeCode + routerFileEnding;
-      return fs.writeFileAsync(nov.novemberDir() + 'app/router.js', routerContents);
+      return fs.writeFileAsync(nov.novemberDir() + 'api/router.js', routerContents);
     })
     // Create the model's folder inside "controllers"
     .then(function() {
-      return mkdirp.mkdirpAsync(nov.novemberDir() + 'app/controllers/' + modelFolderName)
+      return mkdirp.mkdirpAsync(nov.novemberDir() + 'api/controllers/' + modelFolderName)
     })
     // Add all the CRUD-actions for the model
     .then(function() {
@@ -54,7 +54,7 @@ module.exports = function(modelName) {
 
       async.each(files, function(file, callback) {
         var templateMethod = 'template-files/controller-files/' + file + '.js';
-        var targetMethod   = 'app/controllers/' + modelFolderName + '/' + file + '.js';
+        var targetMethod   = 'api/controllers/' + modelFolderName + '/' + file + '.js';
 
         nov.generateFile(templateMethod, targetMethod, modelName)
         .then(function() {
@@ -74,7 +74,7 @@ module.exports = function(modelName) {
     // Generate the file inside "models"
     .then(function() {
       var templateFile = 'template-files/model.js';
-      var targetPath = 'app/models/' + modelFolderName + '.js';
+      var targetPath = 'api/models/' + modelFolderName + '.js';
 
       return nov.generateFile(templateFile, targetPath, modelName);
     })

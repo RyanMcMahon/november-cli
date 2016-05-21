@@ -18,7 +18,7 @@ module.exports = function(actionName) {
 
   // Check if the action already exists
   try {
-    stats = fs.lstatSync(nov.novemberDir() + 'app/actions/' + actionName + '.js');
+    stats = fs.lstatSync(nov.novemberDir() + 'api/actions/' + actionName + '.js');
     finalResolver.reject("There's already an action with the name " + actionName + "!");
   }
   catch (e) {
@@ -27,7 +27,7 @@ module.exports = function(actionName) {
     var routerContents;
 
     // Get current contents of router.js file and remove last part
-    fs.readFileAsync(nov.novemberDir() + 'app/router.js', 'utf8')
+    fs.readFileAsync(nov.novemberDir() + 'api/router.js', 'utf8')
     .then(function(fileContents) {
       routerContents = fileContents.substr(0, fileContents.lastIndexOf('}'));
       return fs.readFileAsync(nov.templateDir('router-action.js'), 'utf8');
@@ -36,12 +36,12 @@ module.exports = function(actionName) {
     .then(function(actionCode) {
       actionCode     = nov.fillTemplatePlaceholders(actionCode, actionName);
       routerContents = routerContents + actionCode + routerFileEnding;
-      return fs.writeFileAsync(nov.novemberDir() + 'app/router.js', routerContents, 'utf8');
+      return fs.writeFileAsync(nov.novemberDir() + 'api/router.js', routerContents, 'utf8');
     })
     // Add action file
     .then(function() {
       var templateFile = 'template-files/action.js';
-      var targetPath   = 'app/actions/' + inflect.dasherize(actionName) + '.js';
+      var targetPath   = 'api/actions/' + inflect.dasherize(actionName) + '.js';
 
       return nov.generateFile(templateFile, targetPath, actionName);
     })

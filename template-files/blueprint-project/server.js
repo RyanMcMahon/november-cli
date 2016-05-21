@@ -1,8 +1,8 @@
 var express    = require('express');
 var app        = express();
 
-var middleware = require('./app/middleware');
-var router     = require('./app/router');
+var middleware = require('./api/middleware');
+var router     = require('./api/router');
 var novrender  = require('./lib/render');
 
 // Set up all the routes and requirements for HTTP requests
