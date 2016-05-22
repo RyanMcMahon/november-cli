@@ -13,15 +13,6 @@ module.exports = function(sequelize, DataTypes) {
      * > unless anything else is specified
      */
   }, {
-    getterMethods: {
-      /*
-       * Set pseudo properties
-       * These will not be stored in the table, but rendered in the JSON response
-       * Example:
-       * username_uppercased: function() { return this.getDataValue('username').toUpperCase(); }
-       */
-    },
-
     classMethods: {
       associate: function(models) {
         /*
@@ -31,13 +22,6 @@ module.exports = function(sequelize, DataTypes) {
          */
       }
     },
-
-    underscored: true,
-    underscoredAll: true
-
-    /* Find more configurations at:
-     * http://docs.sequelizejs.com/en/latest/docs/models-definition/#configuration
-     */
   });
 
   ssaclAttributeRoles({{x-singular-capitalize}});

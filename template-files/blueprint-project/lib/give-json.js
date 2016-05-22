@@ -31,7 +31,7 @@ module.exports = function(req, res, obj, opts) {
 }
 
 
-/* 
+/*
  * Convert embedded data to sideloaded data
  * Go through each element, keep their ids intact and push the values to a new root key
  * Example: { user: {...} } => becomes { user: 1 } with a sideloaded user
@@ -47,11 +47,11 @@ function sideload(json, JSONKey, opts) {
   }
 
   function convertToSideload(obj) {
-    for (i in obj) {
+    for (var i in obj) {
       var value = obj[i];
       var isArray = (value && typeof value[0] === "object");
       var isSingleObj = (typeof value === "object" && value && value.id);
-      
+
       // For both
       if (isArray || isSingleObj) {
         var sideKey = inflect.pluralize(i);
@@ -98,7 +98,7 @@ function sideload(json, JSONKey, opts) {
 function replaceForeignKeys(objData) {
 
   if (objData.constructor === Array) {
-    for (i in objData) {
+    for (var i in objData) {
       var objEl = objData[i];
       objData[i] = removeIdPart(objEl);
     }
@@ -107,10 +107,10 @@ function replaceForeignKeys(objData) {
   }
 
   function removeIdPart(objEl) {
-    for (key in objEl) {
+    for (var key in objEl) {
       var lastThree = key.substr(key.length - 3);
       var keyWithoutLastThree = key.substr(0, key.length - 3);
-      
+
       if (lastThree === "_id") {
         if (!objEl[keyWithoutLastThree]) {
           objEl[keyWithoutLastThree] = objEl[key];
@@ -147,7 +147,7 @@ function unwrapProperties(obj) {
 
   // Get pseudo (computed) properties
   if (obj.constructor === Array) {
-    for (i in obj) {
+    for (var i in obj) {
       var objEl = obj[i];
       objData[i] = getPseudoProperties(objData[i], objEl);
     }
@@ -157,7 +157,7 @@ function unwrapProperties(obj) {
 
   function getPseudoProperties(objData, objEl) {
     if (objEl.__options && objEl.__options.getterMethods) {
-      for (getter in objEl.__options.getterMethods) {
+      for (var getter in objEl.__options.getterMethods) {
         objData[getter] = objEl[getter];
       }
     }
@@ -167,8 +167,8 @@ function unwrapProperties(obj) {
 
   function isForeignKey(value) {
     return (
-      value && 
-      typeof value === "object" && 
+      value &&
+      typeof value === "object" &&
       (value[0] && value[0]['dataValues'] || value.dataValues)
     );
   }
@@ -183,7 +183,7 @@ function unwrapProperties(obj) {
 
   // We call the function recursively so that the associations are also unwrapped
   function simplifyEmbedded(objData) {
-    for (i in objData) {
+    for (var i in objData) {
       if (isForeignKey(objData[i])) {
         objData[i] = unwrapProperties(objData[i]);
       }
